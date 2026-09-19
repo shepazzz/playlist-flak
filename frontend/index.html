@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Playlist FLAC Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Playlist FLAC Manager</h1>
+    <div class="mode-controls">
+      <label>Mode
+        <select id="mode-select">
+          <option value="SAFE">SAFE</option>
+          <option value="ASSISTED">ASSISTED</option>
+        </select>
+      </label>
+      <label class="switch-label">
+        <input type="checkbox" id="strict-flac-toggle" checked />
+        Strict FLAC only
+      </label>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="import">Import &amp; Analyze</button>
+    <button class="tab-btn" data-tab="downloads">Downloads</button>
+    <button class="tab-btn" data-tab="library">Library</button>
+  </nav>
+
+  <main>
+    <section id="tab-import" class="tab-panel active">
+      <div class="import-grid">
+        <div class="import-box">
+          <h3>Paste track list</h3>
+          <p class="hint">One track per line: <code>Artist - Track</code> (also accepts —, –, |, /)</p>
+          <textarea id="text-input" rows="8" placeholder="Vitalic - Poison Lips&#10;Acid Arab - Gul l'Abi&#10;The Chemical Brothers - Star Guitar"></textarea>
+          <button id="analyze-text-btn">ANALYZE</button>
+        </div>
+        <div class="import-box">
+          <h3>Spotify playlist</h3>
+          <p class="hint">Metadata only - no audio is ever fetched from Spotify.</p>
+          <input id="spotify-url-input" type="text" placeholder="https://open.spotify.com/playlist/..." />
+          <button id="analyze-spotify-btn">ANALYZE</button>
+          <h3 style="margin-top:1.5rem">Or upload a CSV / TXT file</h3>
+          <input id="file-input" type="file" accept=".csv,.txt" />
+          <button id="analyze-file-btn">ANALYZE</button>
+        </div>
+      </div>
+
+      <table class="tracks-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Artist</th><th>Track</th><th>Match</th><th>Source</th>
+            <th>Format</th><th>Size</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tracks-tbody"></tbody>
+      </table>
+    </section>
+
+    <section id="tab-downloads" class="tab-panel">
+      <table class="tracks-table">
+        <thead><tr><th>Candidate</th><th>State</th><th>Queued</th><th>Completed</th><th>Error</th></tr></thead>
+        <tbody id="downloads-tbody"></tbody>
+      </table>
+    </section>
+
+    <section id="tab-library" class="tab-panel">
+      <table class="tracks-table">
+        <thead><tr><th>File</th><th>Verification</th><th>Codec</th><th>Sample rate</th><th>Bit depth</th><th>Channels</th><th>Duration</th></tr></thead>
+        <tbody id="library-tbody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <aside id="log-panel">
+    <h4>Log</h4>
+    <div id="log-entries"></div>
+  </aside>
+
+  <div id="candidate-modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <h3 id="modal-title">Candidates</h3>
+      <div id="modal-candidates"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
