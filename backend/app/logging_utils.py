@@ -7,6 +7,7 @@ and also mirrors to the standard python logger for console visibility.
 from __future__ import annotations
 
 import logging
+import re
 
 from sqlalchemy.orm import Session
 
@@ -15,12 +16,19 @@ from app.models import LogEntry
 logger = logging.getLogger("playlist_flac_manager")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-_REDACT_MARKERS = ("api_key", "apikey", "password", "secret", "x-api-key")
+# Only redact when a credential-ish word is directly followed by what looks
+# like an actual value (e.g. "api_key: abc123..." or "X-API-Key=..."), not
+# plain prose that merely mentions "password"/"api key" as a setting name
+# (e.g. "no username/password configured" must stay readable - it's the
+# error message a user needs to diagnose their setup).
+_REDACT_PATTERN = re.compile(
+    r"(api[_-]?key|x-api-key|password|secret|authorization)\s*[:=]\s*\S{4,}",
+    re.IGNORECASE,
+)
 
 
 def _redact(message: str) -> str:
-    lowered = message.lower()
-    if any(marker in lowered for marker in _REDACT_MARKERS):
+    if _REDACT_PATTERN.search(message):
         return "[log message withheld: appeared to contain a credential]"
     return message
 
