@@ -53,6 +53,17 @@ document.getElementById("strict-flac-toggle").addEventListener("change", async (
   await api("/settings", { method: "PUT", body: JSON.stringify({ strict_flac_only: e.target.checked }) });
 });
 
+document.getElementById("reset-all-btn").addEventListener("click", async () => {
+  if (!confirm("Clear all imported tracks, searches, downloads and logs?\n\n(Files already saved into your library folder on disk are NOT deleted.)")) {
+    return;
+  }
+  await api("/admin/reset", { method: "POST" });
+  loadTracks();
+  loadLogs();
+  loadDownloads();
+  loadLibrary();
+});
+
 // ---- Import / analyze ---------------------------------------------------
 
 document.getElementById("analyze-text-btn").addEventListener("click", async () => {
